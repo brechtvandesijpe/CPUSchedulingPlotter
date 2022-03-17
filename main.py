@@ -26,7 +26,7 @@ for i in range(len(x)):
     x[i] /= len(x)
     x[i] *= 100
 
-    if x[i] <= 90:
+    if x[i] >= 90:
         x2.append(x[i])
         y2.append(y[i])
 
