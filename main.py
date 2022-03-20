@@ -1,36 +1,42 @@
-import matplotlib.pyplot as plt
-import csv
+from matplotlib import pylab, mlab
+from matplotlib import pyplot as plt
+import numpy as np
+import CSVReader as csvr
 
-def read_csv():
-    output = [[],[]]
+def plot(data, percentielen, log, trend, aantalPercentielen, xname, yname):
 
-    with open("data.txt") as file:
-        reader = csv.reader(file)
-        for each_row in reader:
-            output[0].append(int(each_row[0]))
-            output[1].append(float(each_row[1]))
+    x, y = [], []
 
-    return output;
+    if percentielen:
+        xx = []
+        x = list(range(aantalPercentielen))
+        for i in range(len(x) - 1):
+            xx.append((i + 1) * 100)
+            y.append(data[((i + 1) * 100) - 1])
+        y.append(data[-1])
+        plt.xticks(list(range(0,101,10)))
 
-data = read_csv()
+    else:
+        x = list(range(len(data)))
+        y = data;
 
-x = data[0]
-y = data[1]
+    if log:
+        plt.yscale('log')
 
-x2 = []
-y2 = []
+    if trend:
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        pylab.plot(x, p(x), "r-")
 
-x.sort()
+    plt.xlabel(xname)
+    plt.ylabel(yname)
 
-for i in range(len(x)):
-    x[i] /= len(x)
-    x[i] *= 100
+    plt.plot(x, y)
 
-    if x[i] >= 90:
-        x2.append(x[i])
-        y2.append(y[i])
+reader = csvr.CSVReader("fcfsWaitingSort.txt")
+reader.read_csv()
 
-plt.plot(x2,y2)
+plot(reader.waitingTime, True, False, False, 100, "Service time", "Waiting time")
+
+
 plt.show()
-
-print(y)
